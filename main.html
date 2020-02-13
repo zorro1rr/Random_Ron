@@ -56,47 +56,58 @@
 	<script>
 	//project demostrating api pull using promise/fetch. Also keeps track of quotes already used and checks to see if the quote has been used in the last 50 fetches. If it has already been used, run the fetch again.
 
+	/**
+	 * Sanitize and encode all HTML in a user-submitted string
+	 * @param  {String} str  The user-submitted string
+	 * @return {String} str  The sanitized string
+	 */
+	var sanitizeHTML = function(str) {
+	    var temp = document.createElement('div');
+	    temp.textContent = str;
+	    return temp.innerHTML;
+	};
+
 	//grab button and blockquote to inject quote into
-    const btn = document.querySelector('button');
-    const quote = document.querySelector('blockquote');
-		//make variable with empty array to push previously used quotes into
-    let quotes = [];
+	const btn = document.querySelector('button');
+	const quote = document.querySelector('blockquote');
+	//make variable with empty array to push previously used quotes into
+	let quotes = [];
 
 
-    //check to see if quote is in the array
-    const getQuote = function () {
-      fetch('http://ron-swanson-quotes.herokuapp.com/v2/quotes').then (function (response) {
-      // The API call was successful!
-      if (response.ok) {
-        return response.json();
-      } else {
-        return Promise.reject(response);
-      }
-    }).then(function (data) {
-      //check to see if quote is in the array
-      if(quotes.indexOf(data[0]) > -1) {
-              getQuote();
-              return;
-           }
-      // This is the JSON from our response
-      quote.innerHTML = data[0];
-      //push quote into the array
-      quotes.push(data[0]);
-      console.log(quotes);
-      // If there are 50 items in the quotes array, reset it
-  if (quotes.length > 50) {
-    quotes = [];
-    }
-    }).catch(function (err) {
-      // There was an error
-      console.warn('Ron hates you', err);
-    });
-  };
-		//run the function when the pages loads
-    getQuote();
+	//check to see if quote is in the array
+	const getQuote = function() {
+	    fetch('http://ron-swanson-quotes.herokuapp.com/v2/quotes').then(function(response) {
+	        // The API call was successful!
+	        if (response.ok) {
+	            return response.json();
+	        } else {
+	            return Promise.reject(response);
+	        }
+	    }).then(function(data) {
+	        //check to see if quote is in the array
+	        if (quotes.indexOf(data[0]) > -1) {
+	            getQuote();
+	            return;
+	        }
+	        // This is the JSON from our response
+	        quote.innerHTML = sanitizeHTML(data[0]);
+	        //push quote into the array
+	        quotes.push(data[0]);
+	        console.log(quotes);
+	        // If there are 50 items in the quotes array, reset it
+	        if (quotes.length > 50) {
+	            quotes = [];
+	        }
+	    }).catch(function(err) {
+	        // There was an error
+	        console.warn('Ron hates you', err);
+	    });
+	};
+	//run the function when the pages loads
+	getQuote();
 
-    // Get a quote when the #get-quote button is clicked
-    btn.addEventListener('click', getQuote, false);
+	// Get a quote when the #get-quote button is clicked
+	btn.addEventListener('click', getQuote, false);
 
 
 	</script>
