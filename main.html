@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Random Ron</title>
+
+	<style type="text/css">
+	* {
+	  box-sizing: border-box;
+	  margin: 0;
+	  padding: 0;
+	  /* outline: 1px solid hotpink; */
+	  }
+
+		body {
+			margin: 1em auto;
+			max-width: 40em;
+			width: 88%;
+			text-align: center;
+			background-image: url("bacon.jpg");
+			height: 100vh;
+      background-size: cover;
+      display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		button {
+			background-image: url(swanson-head.png);
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+			background-color: rgba(0, 0, 0, 0.0);
+      border: none;
+			height: 13em;
+			width: 13em;
+			margin-top: 20px;
+		}
+
+		blockquote {
+
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>Random Ron</h1>
+
+	<blockquote></blockquote>
+
+	<p>
+		<button></button>
+	</p>
+	<p>click Ron for more quotes!</p>
+
+	<script>
+	//project demostrating api pull using promise/fetch. Also keeps track of quotes already used and checks to see if the quote has been used in the last 50 fetches. If it has already been used, run the fetch again.
+
+	//grab button and blockquote to inject quote into
+    const btn = document.querySelector('button');
+    const quote = document.querySelector('blockquote');
+		//make variable with empty array to push previously used quotes into
+    let quotes = [];
+
+
+    //check to see if quote is in the array
+    const getQuote = function () {
+      fetch('http://ron-swanson-quotes.herokuapp.com/v2/quotes').then (function (response) {
+      // The API call was successful!
+      if (response.ok) {
+        return response.json();
+      } else {
+        return Promise.reject(response);
+      }
+    }).then(function (data) {
+      //check to see if quote is in the array
+      if(quotes.indexOf(data[0]) > -1) {
+              getQuote();
+              return;
+           }
+      // This is the JSON from our response
+      quote.innerHTML = data[0];
+      //push quote into the array
+      quotes.push(data[0]);
+      console.log(quotes);
+      // If there are 50 items in the quotes array, reset it
+  if (quotes.length > 50) {
+    quotes = [];
+    }
+    }).catch(function (err) {
+      // There was an error
+      console.warn('Ron hates you', err);
+    });
+  };
+		//run the function when the pages loads
+    getQuote();
+
+    // Get a quote when the #get-quote button is clicked
+    btn.addEventListener('click', getQuote, false);
+
+
+	</script>
+</body>
+</html>
