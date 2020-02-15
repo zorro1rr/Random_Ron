@@ -76,7 +76,7 @@
 
 	//check to see if quote is in the array
 	const getQuote = function() {
-	    fetch('http://ron-swanson-quotes.herokuapp.com/v2/quotes').then(function(response) {
+	    fetch('https://ron-swanson-quotes.herokuapp.com/v2/quotes').then(function(response) {
 	        // The API call was successful!
 	        if (response.ok) {
 	            return response.json();
